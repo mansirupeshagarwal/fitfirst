@@ -175,8 +175,10 @@ a{color:#141414}a:hover{color:#2340C8}
 <form id="waitlist-form" style="width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
 <label for="wl-email" style="position: absolute; left: -9999px">Email</label>
 <input id="wl-email" name="email" type="email" autocomplete="email" required placeholder="Email" style="font: inherit; padding: 12px 20px; border: 1px solid #141414; border-radius: 999px; min-height: 50px; box-sizing: border-box">
-<label for="wl-size" style="position: absolute; left: -9999px">The size you buy now</label>
-<input id="wl-size" name="currentSize" type="text" placeholder="The size you buy now, e.g. 36C" style="font: inherit; padding: 12px 20px; border: 1px solid #141414; border-radius: 999px; min-height: 50px; box-sizing: border-box">
+<label for="wl-size" style="position: absolute; left: -9999px">Band you buy now</label>
+<input id="wl-size" name="currentSize" type="text" placeholder="Band you buy now, e.g. 36" style="font: inherit; padding: 12px 20px; border: 1px solid #141414; border-radius: 999px; min-height: 50px; box-sizing: border-box">
+<label for="wl-cup" style="position: absolute; left: -9999px">Cup size</label>
+<input id="wl-cup" name="currentCup" type="text" placeholder="Cup size, e.g. C" style="font: inherit; padding: 12px 20px; border: 1px solid #141414; border-radius: 999px; min-height: 50px; box-sizing: border-box">
 <div style="display: flex; flex-wrap: wrap; gap: 18px; justify-content: center; font-size: 14px; padding: 6px 0">
 <label style="display: inline-flex; gap: 6px; align-items: center; min-height: 44px"><input name="bras" type="checkbox" checked> Bras</label>
 <label style="display: inline-flex; gap: 6px; align-items: center; min-height: 44px"><input name="clothing" type="checkbox"> Clothing</label>
@@ -228,7 +230,7 @@ a{color:#141414}a:hover{color:#2340C8}
       await submitWaitlist({
         source: 'Homepage',
         email: waitlistForm.elements.email.value,
-        currentSize: waitlistForm.elements.currentSize.value,
+        currentSize: [waitlistForm.elements.currentSize.value, waitlistForm.elements.currentCup.value].map((value) => value.trim()).filter(Boolean).join(''),
         bras: waitlistForm.elements.bras.checked,
         clothing: waitlistForm.elements.clothing.checked,
         fitTester: waitlistForm.elements.fitTester.checked

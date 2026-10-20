@@ -29,8 +29,10 @@
   .btn { font: inherit; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; background: #141414; color: #FFFFFF; border: 0; border-radius: 999px; min-height: 52px; cursor: pointer; width: 100%; }
   .btn.ghost { background: transparent; color: #141414; border: 1px solid #141414; }
   .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .section-label { margin: 8px 0 0; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #5A5C63; }
   .choice { font: inherit; font-size: 16px; min-height: 54px; padding: 0 18px; border-radius: 999px; cursor: pointer; border: 1px solid #141414; background: transparent; color: #141414; text-align: left; }
-  .grid3 .choice { font-size: 18px; text-align: center; padding: 0; }
+  .grid3 .choice, .grid4 .choice { font-size: 18px; text-align: center; padding: 0; }
   .choice.on { background: #141414; color: #FFFFFF; }
   .list { display: flex; flex-direction: column; gap: 10px; }
   .measure { background: #F3F4F6; padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -64,8 +66,12 @@
   </section>
 
   <section class="screen" data-step="1">
-    <h2>What band size do you buy now?</h2>
+    <h2>What size do you buy now?</h2>
+    <p class="section-label">Band</p>
     <div class="grid3" id="bands"></div>
+    <p class="section-label">Cup</p>
+    <div class="grid4" id="cups"></div>
+    <p id="cupHint" hidden>Pick your cup size.</p>
     <div class="spacer"></div>
     <button class="btn" data-next>Next</button>
   </section>
@@ -118,7 +124,8 @@
 
 <script src="waitlist.js"></script>
 <script>
-  const state = { step: 0, band: 36, issues: new Set(), under: 32, over: 38 };
+  const state = { step: 0, band: 36, cup: '', issues: new Set(), under: 32, over: 38 };
+  const cupList = ['A', 'B', 'C', 'D', 'DD', 'E', 'F', 'FF', 'G', 'GG', 'H'];
   const ffLetters = ['D', 'E', 'F', 'G', 'H', 'I', 'J'];
   const ukLetters = ['D', 'DD', 'E', 'F', 'FF', 'G', 'GG'];
   const issueList = ['The band rides up my back', 'Straps dig in or slip off', 'Cups spill over the top', 'Cups gape or wrinkle', 'The wire pokes or sits on my breast', 'Too hot by the evening'];
@@ -130,10 +137,11 @@
     if (idx < 0) return { size: band + 'C', uk: 'Smaller than our launch range for now', compare: 'Our first collection starts at a UK DD. We will let you know if we extend the range.' };
     if (idx > 6) return { size: band + 'J+', uk: 'UK ' + band + 'GG and above', compare: 'These cups are planned for our second phase. Join the list and we will tell you first.' };
     const gap = state.band - band;
+    const bought = state.band + state.cup;
     return {
       size: band + ffLetters[idx],
       uk: 'UK ' + band + ukLetters[idx],
-      compare: gap > 0 ? `That is ${gap} inches smaller in the band than the ${state.band} you buy now, and a much fuller cup. That is why your bras ride up.` : 'Your band is close, so the cup is where your current bras fall short.'
+      compare: gap > 0 ? `That is ${gap} inches smaller in the band than the ${bought} you buy now, and a much fuller cup. That is why your bras ride up.` : 'Your band is close, so the cup is where your current bras fall short.'
     };
   }
 
@@ -142,6 +150,8 @@
     $('stepLabel').textContent = state.step === 0 ? 'Fit finder' : state.step < 5 ? `Step ${state.step} of 4` : 'Done';
     $('progress').style.width = (state.step / 5 * 100) + '%';
     document.querySelectorAll('#bands .choice').forEach((b) => b.classList.toggle('on', +b.dataset.band === state.band));
+    document.querySelectorAll('#cups .choice').forEach((b) => b.classList.toggle('on', b.dataset.cup === state.cup));
+    if (state.cup) $('cupHint').hidden = true;
     document.querySelectorAll('#issues .choice').forEach((b) => b.classList.toggle('on', state.issues.has(+b.dataset.i)));
     $('under').textContent = state.under;
     $('over').textContent = state.over;
@@ -156,6 +166,12 @@
     el.onclick = () => { state.band = b; render(); };
     $('bands').appendChild(el);
   });
+  cupList.forEach((cup) => {
+    const el = document.createElement('button');
+    el.type = 'button'; el.className = 'choice'; el.textContent = cup; el.dataset.cup = cup;
+    el.onclick = () => { state.cup = cup; render(); };
+    $('cups').appendChild(el);
+  });
   issueList.forEach((label, i) => {
     const el = document.createElement('button');
     el.type = 'button'; el.className = 'choice'; el.textContent = label; el.dataset.i = i;
@@ -163,6 +179,10 @@
     $('issues').appendChild(el);
   });
   document.querySelectorAll('[data-next]').forEach((b) => b.onclick = async () => {
+    if (state.step === 1 && !state.cup) {
+      $('cupHint').hidden = false;
+      return;
+    }
     if (b.id === 'saveSize') {
       const email = $('q-email');
       if (!email.reportValidity()) return;
@@ -176,7 +196,7 @@
         await submitWaitlist({
           source: 'Fit finder',
           email: email.value,
-          currentSize: state.band,
+          currentSize: state.band + state.cup,
           bras: true,
           clothing: false,
           fitTester: false,
