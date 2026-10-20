@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fit First — Find your real size</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #FFFFFF; color: #141414; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 16px; line-height: 1.5; }
+  a { color: #2340C8; }
+  .wrap { max-width: 480px; min-height: 100vh; margin: 0 auto; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px 12px; }
+  .logo { font-weight: 500; font-size: 18px; letter-spacing: 0.32em; text-decoration: none; color: #141414; }
+  .step-label { font-size: 13px; font-weight: 600; color: #5A5C63; }
+  .bar { height: 3px; background: #E6E7EA; margin: 0 20px; }
+  .bar > div { height: 3px; background: #2340C8; width: 0; transition: width .2s; }
+  .screen { flex-grow: 1; display: none; flex-direction: column; padding: 28px 20px 24px; gap: 18px; }
+  .screen.active { display: flex; }
+  h1 { margin: 0; font-weight: 400; font-size: 34px; line-height: 1.15; }
+  h2 { margin: 0; font-weight: 400; font-size: 28px; line-height: 1.2; }
+  p { margin: 0; color: #5A5C63; }
+  .spacer { flex-grow: 1; }
+  .hero-img { flex-grow: 1; min-height: 260px; overflow: hidden; }
+  .hero-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .btn { font: inherit; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500; background: #141414; color: #FFFFFF; border: 0; border-radius: 999px; min-height: 52px; cursor: pointer; width: 100%; }
+  .btn.ghost { background: transparent; color: #141414; border: 1px solid #141414; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .choice { font: inherit; font-size: 16px; min-height: 54px; padding: 0 18px; border-radius: 999px; cursor: pointer; border: 1px solid #141414; background: transparent; color: #141414; text-align: left; }
+  .grid3 .choice { font-size: 18px; text-align: center; padding: 0; }
+  .choice.on { background: #141414; color: #FFFFFF; }
+  .list { display: flex; flex-direction: column; gap: 10px; }
+  .measure { background: #F3F4F6; padding: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .measure .t { font-weight: 600; }
+  .measure .s { font-size: 13px; color: #5A5C63; }
+  .stepper { display: flex; align-items: center; gap: 10px; }
+  .stepper button { font: inherit; font-size: 22px; width: 44px; height: 44px; border-radius: 999px; border: 1px solid #141414; background: transparent; cursor: pointer; }
+  .stepper output { font-size: 26px; min-width: 40px; text-align: center; }
+  .result { background: #2340C8; color: #FFFFFF; padding: 26px 22px; display: flex; flex-direction: column; gap: 6px; }
+  .result .k { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; opacity: .8; }
+  .result .size { font-size: 64px; line-height: 1; }
+  .result .uk { font-size: 15px; opacity: .85; }
+  label.cap { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+  input[type=email] { font: inherit; padding: 14px 16px; border: 1px solid #141414; border-radius: 999px; min-height: 52px; }
+  .center { text-align: center; justify-content: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="logo" href="index.html">FIT FIRST</a>
+    <div class="step-label" id="stepLabel">Fit finder</div>
+  </div>
+  <div class="bar"><div id="progress"></div></div>
+
+  <section class="screen active" data-step="0">
+    <div class="hero-img"><img src="images/bra-flatlay-sheet.jpg" alt=""></div>
+    <h1>Find your real size.</h1>
+    <p>Most women we measured wear a band 4 to 6 inches too big. Two minutes and a tape measure will tell you yours.</p>
+    <button class="btn" data-next>Start</button>
+  </section>
+
+  <section class="screen" data-step="1">
+    <h2>What band size do you buy now?</h2>
+    <div class="grid3" id="bands"></div>
+    <div class="spacer"></div>
+    <button class="btn" data-next>Next</button>
+  </section>
+
+  <section class="screen" data-step="2">
+    <h2>What goes wrong?</h2>
+    <p>Pick all that apply.</p>
+    <div class="list" id="issues"></div>
+    <div class="spacer"></div>
+    <button class="btn" data-next>Next</button>
+  </section>
+
+  <section class="screen" data-step="3">
+    <h2>Now, the tape.</h2>
+    <p>Measure in inches, without a bra or in a thin unpadded one. <a href="#">Watch the 1-minute video</a></p>
+    <div class="measure">
+      <div><div class="t">Underbust</div><div class="s">Snug, right under the bust</div></div>
+      <div class="stepper"><button type="button" aria-label="Decrease underbust" data-adj="under:-1">−</button><output id="under">32</output><button type="button" aria-label="Increase underbust" data-adj="under:1">+</button></div>
+    </div>
+    <div class="measure">
+      <div><div class="t">Overbust</div><div class="s">Loose, across the fullest part</div></div>
+      <div class="stepper"><button type="button" aria-label="Decrease overbust" data-adj="over:-1">−</button><output id="over">38</output><button type="button" aria-label="Increase overbust" data-adj="over:1">+</button></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn" data-next>See my size</button>
+  </section>
+
+  <section class="screen" data-step="4">
+    <div class="result">
+      <div class="k">Your Fit First size</div>
+      <div class="size" id="size">—</div>
+      <div class="uk" id="ukLine"></div>
+    </div>
+    <p id="compare"></p>
+    <label class="cap" for="q-email">Save my size and join the list</label>
+    <input id="q-email" type="email" placeholder="you@example.com">
+    <div class="spacer"></div>
+    <button class="btn" data-next>Join and save my size</button>
+    <a href="https://wa.me/" style="text-align: center; font-weight: 600">Not sure? Ask a fitter on WhatsApp</a>
+  </section>
+
+  <section class="screen center" data-step="5">
+    <h1>You're on the list.</h1>
+    <p>We've saved your size, <strong id="sizeDone"></strong>. You'll hear from us first when samples are ready, and we may invite you to become a Fit Tester.</p>
+    <button class="btn ghost" id="restart">Start again</button>
+    <a href="index.html" style="font-weight: 600">Back to the site</a>
+  </section>
+</div>
+
+<script>
+  const state = { step: 0, band: 36, issues: new Set(), under: 32, over: 38 };
+  const ffLetters = ['D', 'E', 'F', 'G', 'H', 'I', 'J'];
+  const ukLetters = ['D', 'DD', 'E', 'F', 'FF', 'G', 'GG'];
+  const issueList = ['The band rides up my back', 'Straps dig in or slip off', 'Cups spill over the top', 'Cups gape or wrinkle', 'The wire pokes or sits on my breast', 'Too hot by the evening'];
+  const $ = (id) => document.getElementById(id);
+
+  function calc() {
+    const band = Math.round(state.under / 2) * 2;
+    const idx = (state.over - state.under) - 4;
+    if (idx < 0) return { size: band + 'C', uk: 'Smaller than our launch range for now', compare: 'Our first collection starts at a UK DD. We will let you know if we extend the range.' };
+    if (idx > 6) return { size: band + 'J+', uk: 'UK ' + band + 'GG and above', compare: 'These cups are planned for our second phase. Join the list and we will tell you first.' };
+    const gap = state.band - band;
+    return {
+      size: band + ffLetters[idx],
+      uk: 'UK ' + band + ukLetters[idx],
+      compare: gap > 0 ? `That is ${gap} inches smaller in the band than the ${state.band} you buy now, and a much fuller cup. That is why your bras ride up.` : 'Your band is close, so the cup is where your current bras fall short.'
+    };
+  }
+
+  function render() {
+    document.querySelectorAll('.screen').forEach((el) => el.classList.toggle('active', +el.dataset.step === state.step));
+    $('stepLabel').textContent = state.step === 0 ? 'Fit finder' : state.step < 5 ? `Step ${state.step} of 4` : 'Done';
+    $('progress').style.width = (state.step / 5 * 100) + '%';
+    document.querySelectorAll('#bands .choice').forEach((b) => b.classList.toggle('on', +b.dataset.band === state.band));
+    document.querySelectorAll('#issues .choice').forEach((b) => b.classList.toggle('on', state.issues.has(+b.dataset.i)));
+    $('under').textContent = state.under;
+    $('over').textContent = state.over;
+    const r = calc();
+    $('size').textContent = r.size; $('sizeDone').textContent = r.size;
+    $('ukLine').textContent = r.uk; $('compare').textContent = r.compare;
+  }
+
+  [32, 34, 36, 38, 40, 42].forEach((b) => {
+    const el = document.createElement('button');
+    el.type = 'button'; el.className = 'choice'; el.textContent = b; el.dataset.band = b;
+    el.onclick = () => { state.band = b; render(); };
+    $('bands').appendChild(el);
+  });
+  issueList.forEach((label, i) => {
+    const el = document.createElement('button');
+    el.type = 'button'; el.className = 'choice'; el.textContent = label; el.dataset.i = i;
+    el.onclick = () => { state.issues.has(i) ? state.issues.delete(i) : state.issues.add(i); render(); };
+    $('issues').appendChild(el);
+  });
+  document.querySelectorAll('[data-next]').forEach((b) => b.onclick = () => { state.step = Math.min(state.step + 1, 5); render(); });
+  document.querySelectorAll('[data-adj]').forEach((b) => b.onclick = () => {
+    const [k, d] = b.dataset.adj.split(':');
+    if (k === 'under') state.under = Math.min(44, Math.max(24, state.under + +d));
+    else state.over = Math.min(60, Math.max(state.under, state.over + +d));
+    if (state.over < state.under) state.over = state.under;
+    render();
+  });
+  $('restart').onclick = () => { state.step = 0; state.issues.clear(); render(); };
+  render();
+</script>
+</body>
+</html>
