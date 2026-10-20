@@ -46,7 +46,7 @@
   .result .size { font-size: 64px; line-height: 1; }
   .result .uk { font-size: 15px; opacity: .85; }
   label.cap { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-  input[type=email] { font: inherit; padding: 14px 16px; border: 1px solid #141414; border-radius: 999px; min-height: 52px; }
+  input[type=tel] { font: inherit; padding: 14px 16px; border: 1px solid #141414; border-radius: 999px; min-height: 52px; }
   .center { text-align: center; justify-content: center; }
 </style>
 </head>
@@ -106,8 +106,8 @@
       <div class="uk" id="ukLine"></div>
     </div>
     <p id="compare"></p>
-    <label class="cap" for="q-email">Save my size and join the list</label>
-    <input id="q-email" type="email" autocomplete="email" required placeholder="you@example.com">
+    <label class="cap" for="q-whatsapp">Save my size and join the list</label>
+    <input id="q-whatsapp" type="tel" inputmode="tel" autocomplete="tel" required pattern="[0-9+\s()-]{8,}" title="Enter a WhatsApp number" placeholder="WhatsApp number">
     <p id="q-status" role="status" aria-live="polite"></p>
     <div class="spacer"></div>
     <button class="btn" id="saveSize" data-next>Join and save my size</button>
@@ -184,8 +184,8 @@
       return;
     }
     if (b.id === 'saveSize') {
-      const email = $('q-email');
-      if (!email.reportValidity()) return;
+      const whatsapp = $('q-whatsapp');
+      if (!whatsapp.reportValidity()) return;
 
       b.disabled = true;
       b.textContent = 'Saving…';
@@ -195,7 +195,8 @@
         const result = calc();
         await submitWaitlist({
           source: 'Fit finder',
-          email: email.value,
+          email: whatsapp.value,
+          whatsapp: whatsapp.value,
           currentSize: state.band + state.cup,
           bras: true,
           clothing: false,

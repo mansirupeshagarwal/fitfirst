@@ -2,7 +2,7 @@ const SHEET_NAME = 'Waitlist';
 const HEADERS = [
   'Submitted at',
   'Source',
-  'Email',
+  'WhatsApp number',
   'Current size',
   'Bras',
   'Clothing',
@@ -26,7 +26,7 @@ function doPost(event) {
       sheet.appendRow([
         new Date(),
         safeCell(values.source),
-        safeCell(values.email),
+        safeCell(values.whatsapp || values.email),
         safeCell(values.currentSize),
         values.bras === 'true' ? 'Yes' : 'No',
         values.clothing === 'true' ? 'Yes' : 'No',
@@ -60,6 +60,8 @@ function getWaitlistSheet() {
     sheet.appendRow(HEADERS);
     sheet.setFrozenRows(1);
     sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+  } else if (sheet.getRange(1, 3).getValue() === 'Email') {
+    sheet.getRange(1, 3).setValue('WhatsApp number');
   }
 
   return sheet;

@@ -29,17 +29,17 @@ a{color:#141414}a:hover{color:#2340C8}
 <div style="flex: 1 1 260px; display: flex; justify-content: flex-end; gap: 28px; font-size: 13px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; align-items: center">
 <a href="fit-finder.html" style="text-decoration: none">Find my size</a>
 <a href="#waitlist" style="text-decoration: none">Waitlist</a>
-<a href="https://forms.gle/HiiJvUf4jHiJRWTU9" target="_blank" rel="noopener noreferrer" style="text-decoration: none; color: #2340C8">Survey</a>
+<a href="https://forms.gle/HiiJvUf4jHiJRWTU9" target="_blank" rel="noopener noreferrer" style="text-decoration: none">Survey</a>
 </div>
 </div>
 </header>
 
 <!-- Hero -->
 <section id="top">
-<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; height: clamp(380px, 52vw, 760px)">
-<img src="images/open-shirt-white-trousers.jpg" alt="Lace bra under an open white shirt" style="width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block">
-<img src="images/warm-bedroom.jpg" alt="Relaxing at home in warm light" style="width: 100%; height: 100%; object-fit: cover; display: block">
-<img src="images/red-lace-denim.jpg" alt="Red lace under a white denim shirt" style="width: 100%; height: 100%; object-fit: cover; display: block">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; height: clamp(380px, 52vw, 760px); overflow: hidden">
+<img src="images/open-shirt-white-trousers.jpg" alt="Lace bra under an open white shirt" style="width: 100%; height: 100%; min-height: 0; object-fit: cover; object-position: center 20%; display: block">
+<img src="images/warm-bedroom.jpg" alt="Relaxing at home in warm light" style="width: 100%; height: 100%; min-height: 0; object-fit: cover; display: block">
+<img src="images/red-lace-denim.jpg" alt="Red lace under a white denim shirt" style="width: 100%; height: 100%; min-height: 0; object-fit: cover; display: block">
 </div>
 <div style="max-width: 820px; margin: 0 auto; padding: 56px 32px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px">
 <h1 style="margin: 0; font-weight: 400; font-size: clamp(30px, 3.4vw, 48px); line-height: 1.15; letter-spacing: -0.01em">Lace you want to be seen in. Made for DD to G.</h1>
@@ -173,8 +173,8 @@ a{color:#141414}a:hover{color:#2340C8}
 <h2 style="margin: 0; font-weight: 400; font-size: clamp(28px, 2.6vw, 38px); line-height: 1.2">Be first to get fitted</h2>
 <p style="margin: 0; color: #5A5C63">First access at launch, founding-member pricing, and the chance to try samples as a Fit Tester.</p>
 <form id="waitlist-form" style="width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 12px">
-<label for="wl-email" style="position: absolute; left: -9999px">Email</label>
-<input id="wl-email" name="email" type="email" autocomplete="email" required placeholder="Email" style="font: inherit; padding: 12px 20px; border: 1px solid #141414; border-radius: 999px; min-height: 50px; box-sizing: border-box">
+<label for="wl-whatsapp" style="position: absolute; left: -9999px">WhatsApp number</label>
+<input id="wl-whatsapp" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required pattern="[0-9+\s()-]{8,}" title="Enter a WhatsApp number" placeholder="WhatsApp number" style="font: inherit; padding: 12px 20px; border: 1px solid #141414; border-radius: 999px; min-height: 50px; box-sizing: border-box">
 <label for="wl-size" style="position: absolute; left: -9999px">Band you buy now</label>
 <input id="wl-size" name="currentSize" type="text" placeholder="Band you buy now, e.g. 36" style="font: inherit; padding: 12px 20px; border: 1px solid #141414; border-radius: 999px; min-height: 50px; box-sizing: border-box">
 <label for="wl-cup" style="position: absolute; left: -9999px">Cup size</label>
@@ -229,7 +229,8 @@ a{color:#141414}a:hover{color:#2340C8}
     try {
       await submitWaitlist({
         source: 'Homepage',
-        email: waitlistForm.elements.email.value,
+        email: waitlistForm.elements.whatsapp.value,
+        whatsapp: waitlistForm.elements.whatsapp.value,
         currentSize: [waitlistForm.elements.currentSize.value, waitlistForm.elements.currentCup.value].map((value) => value.trim()).filter(Boolean).join(''),
         bras: waitlistForm.elements.bras.checked,
         clothing: waitlistForm.elements.clothing.checked,
